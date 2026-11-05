@@ -2,6 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <avr/sleep.h>
+#include "Display.h"
 #include "Logger.h"
 
 #define SCREEN_WIDTH 128
@@ -12,7 +13,7 @@
 #define CURSOR_POS_X 6
 #define CURSOR_POS_Y 0
 
-Adafruit_SSD1306 display(
+static Adafruit_SSD1306 display(
   SCREEN_WIDTH,
   SCREEN_HEIGHT,
   &Wire,
@@ -23,15 +24,23 @@ bool displayInit() {
   return display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 }
 
-void displayWrite(const String& text) {
+static void displayPrepareText() {
   display.clearDisplay();
 
   display.setTextColor(SSD1306_WHITE);
   display.setTextSize(TEXT_SIZE);
   display.setCursor(CURSOR_POS_X, CURSOR_POS_Y);
+}
 
+void displayWrite(const String& text) {
+  displayPrepareText();
   display.println(text);
+  display.display();
+}
 
+void displayWrite(const __FlashStringHelper* text) {
+  displayPrepareText();
+  display.println(text);
   display.display();
 }
 

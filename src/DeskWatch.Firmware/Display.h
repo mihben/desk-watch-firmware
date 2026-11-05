@@ -6,6 +6,7 @@
 
 bool displayInit();
 void displayWrite(const String& text);
+void displayWrite(const __FlashStringHelper* text);
 
 void displayTurnOff();
 void displayTurnOn();

@@ -10,6 +10,6 @@ void deviceDisconnect();
 void deviceSleep();
 void deviceWakeup();
 
-void deviceSetTime(String& time);
+void deviceSetTime(const String& time);
 
 void deviceCheckTimeout();

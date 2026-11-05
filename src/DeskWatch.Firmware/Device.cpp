@@ -1,3 +1,4 @@
+#include "Device.h"
 #include "Display.h"
 #include "Logger.h"
 #include "DeviceState.h"
@@ -6,9 +7,9 @@
 
 #define TIMEOUT 10000
 
-DeviceState deviceState = DeviceState::NotStarted;
+static DeviceState deviceState = DeviceState::NotStarted;
 
-unsigned long lastReceivedAt = 0;
+static unsigned long lastReceivedAt = 0;
 
 void deviceInit() {
   Serial.begin(9600);
@@ -21,7 +22,7 @@ void deviceInit() {
   deviceState = DeviceState::Offline;
 
   logInfo(F("device.started"), F("Device started. Waiting for connection..."));
-  displayWrite("OFFLN");
+  displayWrite(F("OFFLN"));
 }
 
 void deviceConnect() {
@@ -38,7 +39,7 @@ void deviceConnect() {
   }
 
   deviceState = DeviceState::Connected;
-  displayWrite("READY");
+  displayWrite(F("READY"));
 
   logInfo(F("connection.established"), F("Connection established"));
 }
@@ -57,7 +58,7 @@ void deviceDisconnect() {
   }
 
   deviceState = DeviceState::Offline;
-  displayWrite("OFFLN");
+  displayWrite(F("OFFLN"));
 
   logInfo(F("connection.closed"), F("Connection closed by host"));
 }
@@ -95,10 +96,10 @@ void deviceWakeup() {
   deviceState = DeviceState::Offline;
 
   logInfo(F("device.wokeup"), F("Device woke up from sleep mode."));
-  displayWrite("OFFLN"); 
+  displayWrite(F("OFFLN")); 
 }
 
-void deviceSetTime(String& time) {
+void deviceSetTime(const String& time) {
   lastReceivedAt = millis();
 
   if (deviceState == DeviceState::NotStarted) {
@@ -132,6 +133,6 @@ void deviceCheckTimeout() {
   if ((millis() - lastReceivedAt) >= TIMEOUT) {
     logError(F("connection.lost"), F("Connection is lost."));
     deviceState = DeviceState::Offline;
-    displayWrite("OFFLN");
+    displayWrite(F("OFFLN"));
   }
 }
