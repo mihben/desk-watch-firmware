@@ -112,6 +112,14 @@ void deviceSetTime(String& time) {
     return;
   }
 
+  if (time.length() == 0) {
+    logError(F("set.command.rejected"), F("Time is missing."));
+    return;
+  } else if (time.length() > DISPLAY_MAX_TEXT_LENGTH) {
+    logError(F("set.command.rejected"), F("Time is too long for the display."));
+    return;
+  }
+
   displayWrite(time);
   logInfo(F("time.synchronized"), F("Time has been synchronized"));
 }
