@@ -1,6 +1,6 @@
-#include <Arduino.h>
+#include "Logger.h"
 
-void log(const String& level, const String& event, const String& message) {
+static void logBegin(const __FlashStringHelper* level, const __FlashStringHelper* event, const __FlashStringHelper* message) {
   Serial.print(F("{\"timestamp\":"));
   Serial.print(millis());
   Serial.print(F(",\"level\":\""));
@@ -9,13 +9,24 @@ void log(const String& level, const String& event, const String& message) {
   Serial.print(event);
   Serial.print(F("\",\"message\":\""));
   Serial.print(message);
+}
+
+static void logEnd() {
   Serial.println(F("\"}"));
 }
 
-void logInfo(const String& event, const String& message) {
-  log("INF", event, message);
+void logInfo(const __FlashStringHelper* event, const __FlashStringHelper* message) {
+  logBegin(F("INF"), event, message);
+  logEnd();
 }
 
-void logError(const String& event, const String& message) {
-  log("ERR", event, message);
+void logError(const __FlashStringHelper* event, const __FlashStringHelper* message) {
+  logBegin(F("ERR"), event, message);
+  logEnd();
+}
+
+void logError(const __FlashStringHelper* event, const __FlashStringHelper* message, const String& detail) {
+  logBegin(F("ERR"), event, message);
+  Serial.print(detail);
+  logEnd();
 }

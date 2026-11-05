@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-void displayInit();
+bool displayInit();
 void displayWrite(const String& text);
 
 void displayTurnOff();

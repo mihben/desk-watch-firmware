@@ -2,5 +2,6 @@
 
 #include <Arduino.h>
 
-void logInfo(const String& event, const String& message);
-void logError(const String& event, const String& message);
+void logInfo(const __FlashStringHelper* event, const __FlashStringHelper* message);
+void logError(const __FlashStringHelper* event, const __FlashStringHelper* message);
+void logError(const __FlashStringHelper* event, const __FlashStringHelper* message, const String& detail);

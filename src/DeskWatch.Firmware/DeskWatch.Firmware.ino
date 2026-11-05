@@ -42,7 +42,7 @@ void loop() {
     } else if (command == COMMAND_SET) {
       deviceSetTime(parameter);
     } else {
-      logError("command.unknown", "Unknown command: " + command);
+      logError(F("command.unknown"), F("Unknown command: "), command);
     }
   } else {
     deviceCheckTimeout();

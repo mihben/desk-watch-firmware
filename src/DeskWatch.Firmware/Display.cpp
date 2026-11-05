@@ -19,8 +19,8 @@ Adafruit_SSD1306 display(
   -1
 );
 
-void displayInit() {
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+bool displayInit() {
+  return display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 }
 
 void displayWrite(const String& text) {

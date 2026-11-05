@@ -11,86 +11,90 @@ DeviceState deviceState = DeviceState::NotStarted;
 unsigned long lastReceivedAt = 0;
 
 void deviceInit() {
-  displayInit();
-
   Serial.begin(9600);
+
+  if (!displayInit()) {
+    logError(F("device.init.failed"), F("Display initialization failed."));
+    return;
+  }
+
   deviceState = DeviceState::Offline;
 
-  logInfo("device.started", "Device started. Waiting for connection...");
+  logInfo(F("device.started"), F("Device started. Waiting for connection..."));
   displayWrite("OFFLN");
 }
 
 void deviceConnect() {
   lastReceivedAt = millis();
   if (deviceState == DeviceState::NotStarted) {
-    logError("connection.command.rejected", "Device has not been started.");
+    logError(F("connection.command.rejected"), F("Device has not been started."));
     return;
   } else if (deviceState == DeviceState::Connected) {
-    logError("connection.command.rejected", "Device is already connected.");
+    logError(F("connection.command.rejected"), F("Device is already connected."));
     return;
   } else if (deviceState == DeviceState::Sleeping) {
-    logError("connection.command.rejected", "Device is in sleeping mode.");
+    logError(F("connection.command.rejected"), F("Device is in sleeping mode."));
     return;
   }
 
   deviceState = DeviceState::Connected;
   displayWrite("READY");
 
-  logInfo("connection.established", "Connection established");
+  logInfo(F("connection.established"), F("Connection established"));
 }
 
 void deviceDisconnect() { 
   lastReceivedAt = millis();
   if (deviceState == DeviceState::NotStarted) {
-    logError("disconnection.command.rejected", "Device is not started.");
+    logError(F("disconnection.command.rejected"), F("Device is not started."));
     return;
   } else if (deviceState == DeviceState::Offline) {
-    logError("disconnection.command.rejected", "Device is not connected.");
+    logError(F("disconnection.command.rejected"), F("Device is not connected."));
     return;
   } else if (deviceState == DeviceState::Sleeping) {
-    logError("disconnection.command.rejected", "Device is in sleeping mode.");
+    logError(F("disconnection.command.rejected"), F("Device is in sleeping mode."));
     return;
   }
 
   deviceState = DeviceState::Offline;
   displayWrite("OFFLN");
 
-  logInfo("connection.closed", "Connection closed by host");
+  logInfo(F("connection.closed"), F("Connection closed by host"));
 }
 
 void deviceSleep() {  
   lastReceivedAt = millis();
   if (deviceState == DeviceState::NotStarted) {
-    logError("sleep.command.rejected", "Device is not started.");
+    logError(F("sleep.command.rejected"), F("Device is not started."));
     return;
   } else if (deviceState == DeviceState::Connected) {
-    logError("sleep.command.rejected", "Device is connected.");
+    logError(F("sleep.command.rejected"), F("Device is connected."));
     return;
   } else if (deviceState == DeviceState::Sleeping) {
-    logError("sleep.command.rejected", "Device is already sleeping.");
+    logError(F("sleep.command.rejected"), F("Device is already sleeping."));
     return;
   }
 
   displayTurnOff();
   deviceState = DeviceState::Sleeping;
 
-  logInfo("device.asleep", "Device entering sleep mode.");
+  logInfo(F("device.asleep"), F("Device entering sleep mode."));
 }
 
 void deviceWakeup() {
   lastReceivedAt = millis(); 
   if (deviceState == DeviceState::NotStarted) {
-    logError("wakeup.command.rejected", "Device is not started.");
+    logError(F("wakeup.command.rejected"), F("Device is not started."));
     return;
   } else if (deviceState != DeviceState::Sleeping) {
-    logError("wakeup.command.rejected", "Device is not sleeping.");
+    logError(F("wakeup.command.rejected"), F("Device is not sleeping."));
     return;
   }
 
   displayTurnOn();
   deviceState = DeviceState::Offline;
 
-  logInfo("device.wokeup", "Device woke up from sleep mode.");
+  logInfo(F("device.wokeup"), F("Device woke up from sleep mode."));
   displayWrite("OFFLN"); 
 }
 
@@ -98,18 +102,18 @@ void deviceSetTime(String& time) {
   lastReceivedAt = millis();
 
   if (deviceState == DeviceState::NotStarted) {
-    logError("set.command.rejected", "Device is not started.");
+    logError(F("set.command.rejected"), F("Device is not started."));
     return;
   } else if (deviceState == DeviceState::Offline) {
-    logError("set.command.rejected", "Device is not connected.");
+    logError(F("set.command.rejected"), F("Device is not connected."));
     return;
   } else if (deviceState == DeviceState::Sleeping) {
-    logError("set.command.rejected", "Device is in sleep mode.");
+    logError(F("set.command.rejected"), F("Device is in sleep mode."));
     return;
   }
 
   displayWrite(time);
-  logInfo("time.synchronized", "Time has been synchronized");
+  logInfo(F("time.synchronized"), F("Time has been synchronized"));
 }
 
 void deviceCheckTimeout() {
@@ -118,7 +122,7 @@ void deviceCheckTimeout() {
   }
 
   if ((millis() - lastReceivedAt) >= TIMEOUT) {
-    logError("connection.lost", "Connection is lost.");
+    logError(F("connection.lost"), F("Connection is lost."));
     deviceState = DeviceState::Offline;
     displayWrite("OFFLN");
   }
