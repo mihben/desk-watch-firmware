@@ -58,11 +58,14 @@ Do not send `\r`: the firmware does not strip it, so a line ending in `\r\n` is 
 
 ### Connection timeout
 
-If the device is `Connected` and receives no recognized command for 10 seconds, it logs `connection.lost`, moves to `Offline` and shows `OFFLN`. There is no separate heartbeat command: the client sends `SET` about once a second, which also keeps the connection alive. Rejected commands reset the timeout too, but unknown commands do not.
+If the device is `Connected` and receives no recognized command for 10 seconds, it logs `connection.lost`, moves to `Offline` and shows `OFFLN`. There is no separate heartbeat command: the desktop client sends `SET` every 500 ms, which also keeps the connection alive. Rejected commands reset the timeout too, but unknown commands do not.
 
 ### Starting a session
 
-Opening the serial port normally restarts the Nano. The client should wait for the `device.started` log line before sending `CONNECT`.
+Whether opening the serial port restarts the Nano depends on the DTR line:
+
+- **DTR off, as in the desktop client:** the board does not restart and no `device.started` line arrives, so the client must not wait for it and can send `CONNECT` right away.
+- **DTR on, or DTR left on by the previous program using the port:** the board restarts when the port opens. `device.started` arrives about 1.6 seconds later, and commands sent before that are lost.
 
 ## Logs
 
