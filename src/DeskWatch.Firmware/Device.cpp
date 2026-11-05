@@ -30,9 +30,6 @@ void deviceConnect() {
   if (deviceState == DeviceState::NotStarted) {
     logError(F("connection.command.rejected"), F("Device has not been started."));
     return;
-  } else if (deviceState == DeviceState::Connected) {
-    logError(F("connection.command.rejected"), F("Device is already connected."));
-    return;
   } else if (deviceState == DeviceState::Sleeping) {
     logError(F("connection.command.rejected"), F("Device is in sleeping mode."));
     return;
